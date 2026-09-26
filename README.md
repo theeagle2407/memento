@@ -4,7 +4,20 @@
 
 A maintenance review workspace that brings a file’s changes, the reason for them, and their test evidence into one portable handover.
 
-[Quick start](#quick-start) · [Workflow](#the-workflow) · [Demo](#try-the-demo) · [Evidence model](#what-the-evidence-means) · [Architecture](#architecture)
+[Live demo](https://memento-jet.vercel.app/) · [Quick start](#quick-start) · [Workflow](#the-workflow) · [Demo](#try-the-demo) · [Evidence model](#what-the-evidence-means) · [Architecture](#architecture)
+
+## Live application
+
+**[Open Memento](https://memento-jet.vercel.app/)**
+
+Choose **Try SignalGrid** to explore the built-in verification lab without setup.
+
+To explore the repository handover, download
+[`router-handover.json`](docs/demo-evidence/router-handover.json),
+open the workspace, and select **Import handover**.
+
+Reviews are stored in your browser. The hosted application does not automatically
+contain reviews created on localhost or in another browser.
 
 ## Why Memento
 
