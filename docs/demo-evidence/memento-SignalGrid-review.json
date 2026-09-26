@@ -1,0 +1,155 @@
+{
+  "exportedAt": "2026-09-26T05:34:10.539Z",
+  "review": {
+    "id": "sample",
+    "title": "Extend retries. Preserve ownership.",
+    "project": "SignalGrid",
+    "file": "src/lib/memento/verification.ts",
+    "before": "// src/lib/memento/verification.ts\n// Configuration executed by the local verification lab.\nexport const baseline = {\n  maxRetries: 2,\n  preserveClaim: true,\n};\n\n// If preserveClaim is true, reserve the event/recipient\n// before transport; followers observe the existing claim.\n// If false, each caller starts its own delivery operation.",
+    "after": "// src/lib/memento/verification.ts\n// Configuration executed by the local verification lab.\nexport const repaired = {\n  maxRetries: 5,\n  preserveClaim: true,\n};\n\n// If preserveClaim is true, reserve the event/recipient\n// before transport; followers observe the existing claim.\n// If false, each caller starts its own delivery operation.",
+    "context": "Three transient failures must be recoverable. Keep one active operation for the same event and recipient. Later calls after completion must not send again. This is a fictional, in-process laboratory adapted from SignalGrid; it does not verify an external SMS provider.",
+    "invariant": "Claim the event and recipient before transport starts.",
+    "notes": "",
+    "createdAt": ""
+  },
+  "verification": {
+    "scope": "Fictional single-process sample only. No external delivery or arbitrary uploaded code executed.",
+    "runId": "05e63299-4abf-4ce6-bc89-372520cd11cc",
+    "createdAt": "2026-09-26T05:33:54.059Z",
+    "durationMs": 0.45,
+    "baseline": {
+      "revision": "baseline",
+      "passed": false,
+      "checks": [
+        {
+          "label": "Recovers after three timeouts",
+          "pass": false,
+          "detail": "0 simulated completion(s) after 3 transport attempt(s)."
+        },
+        {
+          "label": "Only one concurrent operation starts",
+          "pass": true,
+          "detail": "1 operation(s) started for the same event and recipient."
+        },
+        {
+          "label": "Only one simulated completion occurs",
+          "pass": false,
+          "detail": "0 completion(s) in the concurrent run."
+        },
+        {
+          "label": "Completed replay sends nothing further",
+          "pass": false,
+          "detail": "Not satisfied: no completed operation to replay."
+        }
+      ],
+      "trace": [
+        {
+          "sequence": 1,
+          "worker": "Worker A",
+          "event": "Delivery claim reserved"
+        },
+        {
+          "sequence": 2,
+          "worker": "Worker B",
+          "event": "Existing claim observed; no transport"
+        },
+        {
+          "sequence": 3,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 1
+        },
+        {
+          "sequence": 4,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 2
+        },
+        {
+          "sequence": 5,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 3
+        },
+        {
+          "sequence": 6,
+          "worker": "Worker A",
+          "event": "Retry budget exhausted"
+        }
+      ],
+      "attempts": 3,
+      "operations": 1,
+      "completed": 0
+    },
+    "candidate": {
+      "revision": "repaired",
+      "passed": true,
+      "checks": [
+        {
+          "label": "Recovers after three timeouts",
+          "pass": true,
+          "detail": "1 simulated completion(s) after 4 transport attempt(s)."
+        },
+        {
+          "label": "Only one concurrent operation starts",
+          "pass": true,
+          "detail": "1 operation(s) started for the same event and recipient."
+        },
+        {
+          "label": "Only one simulated completion occurs",
+          "pass": true,
+          "detail": "1 completion(s) in the concurrent run."
+        },
+        {
+          "label": "Completed replay sends nothing further",
+          "pass": true,
+          "detail": "0 additional transport attempt(s)."
+        }
+      ],
+      "trace": [
+        {
+          "sequence": 1,
+          "worker": "Worker A",
+          "event": "Delivery claim reserved"
+        },
+        {
+          "sequence": 2,
+          "worker": "Worker B",
+          "event": "Existing claim observed; no transport"
+        },
+        {
+          "sequence": 3,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 1
+        },
+        {
+          "sequence": 4,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 2
+        },
+        {
+          "sequence": 5,
+          "worker": "Worker A",
+          "event": "Simulated timeout (no external send)",
+          "attempt": 3
+        },
+        {
+          "sequence": 6,
+          "worker": "Worker A",
+          "event": "Simulated operation completed",
+          "attempt": 4
+        },
+        {
+          "sequence": 7,
+          "worker": "Repeat caller",
+          "event": "Existing claim observed; no transport"
+        }
+      ],
+      "attempts": 4,
+      "operations": 1,
+      "completed": 1
+    }
+  }
+}

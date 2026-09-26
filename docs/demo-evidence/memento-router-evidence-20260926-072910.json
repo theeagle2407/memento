@@ -1,0 +1,16 @@
+{
+  "schema": "memento.test-evidence.v1",
+  "file": "demo/signalgrid/router.ts",
+  "sha256Before": "5ed4c3bdd1c5a688c4d4e3b437b37925eca765ac28057ffd676205dbb8d12e51",
+  "sha256After": "5ed4c3bdd1c5a688c4d4e3b437b37925eca765ac28057ffd676205dbb8d12e51",
+  "command": [
+    "npm",
+    "test"
+  ],
+  "startedAt": "2026-09-26T06:29:10.715Z",
+  "finishedAt": "2026-09-26T06:29:11.382Z",
+  "exitCode": 0,
+  "signal": null,
+  "output": "\n> memento-hackathon@0.1.0 test\n> npm run test:signalgrid\n\n\n> memento-hackathon@0.1.0 test:signalgrid\n> tsc --module commonjs --target es2022 --moduleResolution node --esModuleInterop --skipLibCheck --outDir .memento-test-build demo/signalgrid/*.ts scripts/verify-signalgrid.ts && node .memento-test-build/scripts/verify-signalgrid.js\n\nSignalGrid fixture verification\n\n\n── Single SMS delivery — 2 timeouts then delivered on attempt 3\n  ✓  finalStatus is delivered\n  ✓  exactly 3 transport attempts\n  ✓  attempt 1 outcome is network_timeout\n  ✓  attempt 2 outcome is network_timeout\n  ✓  attempt 3 outcome is delivered\n\n── Concurrent delivery — second caller observes pending claim, no duplicate transport\n  ✓  (a) first result finalStatus is delivered\n  ✓  (b) second result did not perform transport (zero attempts on its returned record OR same record as first)\n  ✓  (c) persisted record finalStatus is delivered\n  ✓  (d) exactly 3 transport attempts (got 3)\n  ✓  (e) repeat call makes zero further transport attempts\n\n── Non-SMS channel (email) — delivered on first attempt\n  ✓  finalStatus is delivered\n  ✓  exactly 1 transport attempt\n  ✓  single attempt outcome is delivered\n\n── Delivered record cannot be overwritten by a failure\n  ✓  delivered record finalStatus unchanged after failed overwrite attempt\n\n── summariseRouting — runtime evidence: original formula miscounts pending as failed\n     original  failed=1  (expected 0 — bug returns 1)\n  ✓  original implementation: failed equals 1 for pending-only input (demonstrates the miscount)\n     fixed     failed=0  (expected 0 — correct)\n  ✓  fixed implementation: failed equals 0 for pending-only input\n\n── summariseRouting — mixed delivered/failed/pending list\n  ✓  total equals record count (5)\n  ✓  delivered count is 2\n  ✓  failed count is 1\n  ✓  pending count is 2\n  ✓  total equals delivered+failed+pending\n\n── summariseRouting — pending-only input must report zero failures\n  ✓  total is 3\n  ✓  delivered is 0\n  ✓  failed is 0\n  ✓  pending is 3\n\n── summariseRouting — empty input returns zero for every count\n  ✓  total is 0\n  ✓  delivered is 0\n  ✓  failed is 0\n  ✓  pending is 0\n  ✓  totalAttempts is 0\n\n── summariseRouting — totalAttempts is sum across all records\n  ✓  totalAttempts is 5 (3+2+0)\n  ✓  total is 3\n\n────────────────────────────────────────────────\nPASS  32 assertions passed, 0 failed\n\n",
+  "truncated": false
+}

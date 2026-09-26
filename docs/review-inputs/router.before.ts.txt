@@ -1,0 +1,106 @@
+/**
+ * SignalGrid – alert router
+ *
+ * Routes an AlertEvent to all relevant recipients and drives delivery
+ * through the retry engine. The router is responsible for:
+ *
+ *  1. Resolving recipients for an event (by severity + subscription rules)
+ *  2. Fanning out to each recipient's preferred channel
+ *  3. Delegating retries to attemptDelivery()
+ *  4. Aggregating the per-recipient DeliveryRecord results
+ *
+ * The router deliberately does NOT implement retry logic itself — that
+ * lives exclusively in retry.ts. This separation ensures the invariant
+ * check in attemptDelivery() cannot be bypassed by a new routing path.
+ */
+
+import type { AlertEvent, DeliveryRecord, Recipient } from "./types";
+import { attemptDelivery, RETRY_CONFIG } from "./retry";
+
+// ─── Fixture data ─────────────────────────────────────────────────────────────
+
+export const FIXTURE_RECIPIENTS: Recipient[] = [
+  {
+    recipientId: "r_001",
+    name: "Anika Sharma",
+    channels: ["sms", "email"],
+  },
+  {
+    recipientId: "r_002",
+    name: "Marcus Obi",
+    channels: ["push", "sms"],
+  },
+  {
+    recipientId: "r_003",
+    name: "Lena Vogel",
+    channels: ["email"],
+  },
+  {
+    recipientId: "r_004",
+    name: "Tariq Hassan",
+    channels: ["sms"],
+  },
+];
+
+export const FIXTURE_EVENTS: AlertEvent[] = [
+  {
+    eventId: "evt_flood_2024_001",
+    title: "Flash Flood Warning – Zone 4",
+    body: "Immediate evacuation advised for low-lying areas in Zone 4. Move to higher ground.",
+    severity: "critical",
+    createdAt: "2024-11-14T03:22:00Z",
+  },
+  {
+    eventId: "evt_power_2024_047",
+    title: "Grid Outage – Sectors 12–15",
+    body: "Unplanned outage affecting Sectors 12–15. Estimated restoration: 4–6 hours.",
+    severity: "high",
+    createdAt: "2024-11-14T07:45:00Z",
+  },
+];
+
+// ─── Router ───────────────────────────────────────────────────────────────────
+
+/**
+ * Routes an alert event to all recipients, returning one DeliveryRecord per
+ * recipient. Channel selection uses the first channel in the recipient's
+ * preference list.
+ */
+export async function routeAlert(
+  event: AlertEvent,
+  recipients: Recipient[] = FIXTURE_RECIPIENTS
+): Promise<DeliveryRecord[]> {
+  const results: DeliveryRecord[] = [];
+
+  for (const recipient of recipients) {
+    const primaryChannel = recipient.channels[0];
+    const record = await attemptDelivery(
+      event.eventId,
+      recipient.recipientId,
+      primaryChannel,
+      RETRY_CONFIG
+    );
+    results.push(record);
+  }
+
+  return results;
+}
+
+/**
+ * Returns a human-readable routing summary for display in the Memento UI.
+ */
+export function summariseRouting(records: DeliveryRecord[]): {
+  total: number;
+  delivered: number;
+  failed: number;
+  totalAttempts: number;
+} {
+  const delivered = records.filter((r) => r.finalStatus === "delivered").length;
+  const totalAttempts = records.reduce((sum, r) => sum + r.attempts.length, 0);
+  return {
+    total: records.length,
+    delivered,
+    failed: records.length - delivered,
+    totalAttempts,
+  };
+}

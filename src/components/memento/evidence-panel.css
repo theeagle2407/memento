@@ -1,0 +1,43 @@
+.evidence-panel > dl,
+.evidence-panel details > dl {
+ display:grid;
+ grid-template-columns:150px minmax(0,1fr);
+ gap:12px 24px;
+ margin:24px 0;
+ font-size:13px;
+ line-height:1.65;
+}
+.evidence-panel dl dt {opacity:.65;font-weight:400;}
+.evidence-panel dl dd {margin:0;min-width:0;overflow-wrap:anywhere;}
+.evidence-panel dl code {font-size:12px;}
+.evidence-panel > .result-summary {margin:0 0 24px;padding:18px 20px;}
+.evidence-panel > .result-summary h2 {font-size:17px;line-height:1.5;margin:5px 0;}
+.evidence-panel > .result-summary p {font-size:13px;margin:0;}
+.evidence-panel > details {
+ margin-top:0 !important;
+ border-top:1px solid rgba(180,164,201,.16);
+}
+.evidence-panel > details > summary {
+ padding:16px 0;
+ cursor:pointer;
+ font-size:13px;
+ font-weight:500;
+}
+.evidence-panel > details[open] {padding-bottom:18px;}
+.evidence-panel > details > summary:hover {color:#d4baff;}
+.evidence-panel > details pre {
+ padding:16px;
+ border:1px solid rgba(180,164,201,.16);
+ border-radius:6px;
+ background:rgba(0,0,0,.15);
+ font-size:12px;
+ line-height:1.7;
+ max-height:360px;
+ overflow:auto;
+}
+.evidence-panel > .small {font-size:12px;line-height:1.7;margin:20px 0;}
+.evidence-panel .btn:focus-within {outline:2px solid #b48cf0;outline-offset:3px;}
+@media(max-width:680px){
+ .evidence-panel > dl,.evidence-panel details > dl {grid-template-columns:1fr;gap:4px;}
+ .evidence-panel dl dd {margin-bottom:12px;}
+}
